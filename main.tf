@@ -34,6 +34,7 @@ data "aws_ami" "aws_linux" {
   filter {
     name = "state"
     values = ["available"]
+  }
 }
 
 resource "aws_instance" "ec2" {
