@@ -40,7 +40,7 @@ resource "aws_instance" "ec2" {
   ami = aws_ami.aws_linux.id
   # a hacky way of doing input validation. If not a valid az name, use a random az
   # https://github.com/hashicorp/terraform/issues/2847
-  availability_zones = [ contains(data.aws_availability_zones.names, var.availability_zones) ? var.availability_zones : $random_shuffle.az.result}]
+  availability_zones = [ contains(data.aws_availability_zones.names, var.availability_zones) ? var.availability_zones : random_shuffle.az.result}]
   instance_type = var.size
   key_name = tcg.pem
   tags = {
