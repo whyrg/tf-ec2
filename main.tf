@@ -15,7 +15,7 @@ data "aws_vpcs" "vpcs" {
 }
 
 data "aws_subnet_ids" "subnets" {
-  vpc_id = data.aws_vpcs.vpcs[0]
+  vpc_id = element(data.aws_vpcs.vpcs, 0)
 }
 
 resource "random_shuffle" "az" {
@@ -38,17 +38,19 @@ data "aws_ami" "aws_linux" {
 }
 
 resource "aws_instance" "ec2" {
-  ami = aws_ami.aws_linux.id
+  ami = data.aws_ami.aws_linux.id
   # a hacky way of doing input validation. If not a valid az name, use a random az
   # https://github.com/hashicorp/terraform/issues/2847
-  availability_zones = [ contains(data.aws_availability_zones.names, var.availability_zones) ? var.availability_zones : random_shuffle.az.result ]
+  availability_zone = contains(data.aws_availability_zones.available.names, var.availability_zone) ? var.availability_zone : random_shuffle.az.result
   instance_type = var.size
-  key_name = tcg.pem
+  key_name = "team_dev"
   tags = {
     Name = var.name
     Owner = "scalr"
   }
-  user_data = file(userdata.txt)
-  credit_specification = "unlimited"
+#  user_data = file(userdata.txt)
+  credit_specification {
+    cpu_credits = "unlimited"
+  }
 }
 
