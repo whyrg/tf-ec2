@@ -14,8 +14,12 @@ data "aws_vpcs" "vpcs" {
   }
 }
 
-data "aws_subnet_ids" "subnets" {
+data "aws_subnet_ids" "subnet" {
   vpc_id = element(tolist(data.aws_vpcs.vpcs.ids), 0)
+  filter {
+    name = "availability-zone"
+    values = [element(random_shuffle.az.result,0)]
+  }
 }
 
 resource "random_shuffle" "az" {
@@ -42,9 +46,9 @@ resource "aws_instance" "ec2" {
   # a hacky way of doing input validation. If not a valid az name, use a random az
   # https://github.com/hashicorp/terraform/issues/2847
   availability_zone = contains(data.aws_availability_zones.available.names, var.availability_zone) ? var.availability_zone : element(random_shuffle.az.result,0)
-  #availability_zone = contains(var.availability_zone, data.aws_availability_zones.available.names) ? var.availability_zone : random_shuffle.az.result
   instance_type = var.size
   key_name = "team_dev"
+  subnet_id = element(tolist(data.aws_subnet_ids.subnet.ids),0)
   tags = {
     Name = var.name
     Owner = "scalr"
