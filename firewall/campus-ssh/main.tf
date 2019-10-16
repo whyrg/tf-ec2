@@ -38,6 +38,6 @@ resource "aws_security_group_rule" "ssh" {
 
 
 resource "aws_network_interface_sg_attachment" "sg_attachment" {
-  security_group_id = aws_security_group.allow_web.id
+  security_group_id = aws_security_group.allow_ssh.id
   network_interface_id = data.aws_instance.instance.network_interface_id
 }
