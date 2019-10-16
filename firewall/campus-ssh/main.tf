@@ -33,7 +33,7 @@ resource "aws_security_group_rule" "ssh" {
   to_port = 22
   protocol = "tcp"
   cidr_blocks = ["171.64.0.0/14"]
-  security_group_id = aws_security_group.allow_web.id
+  security_group_id = aws_security_group.allow_ssh.id
 }
 
 
