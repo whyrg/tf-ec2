@@ -54,6 +54,7 @@ resource "aws_instance" "ec2" {
     Owner = "scalr"
   }
 #  user_data = file(userdata.txt)
+  vpc_security_group_ids = []
   credit_specification {
     cpu_credits = "unlimited"
   }
