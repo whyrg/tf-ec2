@@ -15,8 +15,8 @@ data "aws_vpcs" "vpc" {
   }
 }
 
-resource "aws_security_group" "allow_web" {
-  name = "allow_web_${var.instance-id}"
+resource "aws_security_group" "allow_ssh" {
+  name = "allow_ssh_${var.instance-id}"
   description = "Allow ssh from campus"
   vpc_id = element(tolist(data.aws_vpcs.vpc.ids),0)
   egress {
