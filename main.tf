@@ -10,7 +10,7 @@ data "aws_availability_zones" "available" {}
 
 data "aws_vpcs" "vpcs" {
   tags = {
-    Name = var.vpc_name
+    Name = "Terraform-TCG-dev"
   }
 }
 
@@ -60,3 +60,32 @@ resource "aws_instance" "ec2" {
   }
 }
 
+resource "aws_security_group" "allow_ssh" {
+  count = var.firewall_campus ? 1 : 0
+  name = "allow_ssh_${var.instance-id}"
+  description = "Allow ssh from campus"
+  vpc_id = element(tolist(data.aws_vpcs.vpc.ids),0)
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group_rule" "ssh" {
+  depends_on = [ "aws_security_group.allow_ssh" ]
+  type = "ingress"
+  from_port = 22
+  to_port = 22
+  protocol = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.allow_ssh.id
+}
+
+
+resource "aws_network_interface_sg_attachment" "sg_attachment" {
+  depends_on = [ "aws_security_group.allow_ssh" ]
+  security_group_id = aws_security_group.allow_ssh.id
+  network_interface_id = aws_instance.ec2.primary_network_interface_id
+}

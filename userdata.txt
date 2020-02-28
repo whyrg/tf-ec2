@@ -1,0 +1,26 @@
+#!/bin/bash
+
+
+# install DUO
+cat <<DUO > /etc/yum.repos.d/duo.repo
+[duosecurity]
+name=Duo Security Repository
+baseurl=http://pkg.duosecurity.com/RedHat/\$releasever/\$basearch
+enabled=1
+gpgcheck=1
+DUO
+
+rpm --import https://duo.com/RPM-GPG-KEY-DUO
+
+
+yum install duo_unix.x86_64 openssl-devel pam-devel
+
+cat <<CONF_DUO > /etc/security/pam_duo.conf
+[duo]
+ikey = DIDF3X84WRD5F2B4JGCH
+skey = oJ6o7N5aOIENo5KXW3TjWwINU1ojuN8UVz3AGBzn
+host = api-531b0865.duosecurity.com
+CONF_DUO
+
+
+
