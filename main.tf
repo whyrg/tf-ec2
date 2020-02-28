@@ -78,12 +78,12 @@ resource "aws_security_group_rule" "ssh" {
   to_port = 22
   protocol = "tcp"
   cidr_blocks = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.allow_ssh.id
+  security_group_id = aws_security_group[0].allow_ssh.id
 }
 
 
 resource "aws_network_interface_sg_attachment" "sg_attachment" {
   depends_on = [ aws_security_group.allow_ssh ]
-  security_group_id = aws_security_group.allow_ssh.id
+  security_group_id = aws_security_group[0].allow_ssh.id
   network_interface_id = aws_instance.ec2.primary_network_interface_id
 }
