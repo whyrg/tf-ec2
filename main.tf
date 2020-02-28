@@ -60,7 +60,7 @@ resource "aws_instance" "ec2" {
 
 resource "aws_security_group" "allow_ssh" {
   count = var.firewall_campus ? 1 : 0
-  name = "allow_ssh_${var.instance-id}"
+  name = "allow_ssh_${aws_instance.ec2.id}"
   description = "Allow ssh from campus"
   vpc_id = element(tolist(data.aws_vpcs.vpcs.ids),0)
   egress {
